@@ -13,25 +13,42 @@ struct BehaveView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    ForEach(behaveViewModel.analyzerModel.getUserBehaviors(), id: \.0) { behavior, description in
-                        
-                        NavigationLink(destination:
-                                        
-                            StrategyView(title: behavior, description: description)
-                            .environmentObject(behaveViewModel)
-                            ) {
+            VStack {
+                List {
+                    Section {
+                        ForEach(behaveViewModel.analyzerModel.getUserBehaviors(), id: \.0) { behavior, description in
                             
-                            BehaviorItem(behavior: behavior, description: description)
+                            NavigationLink(destination:
+                                            
+                                            StrategyView(title: behavior, description: description)
+                                .environmentObject(behaveViewModel)
+                            ) {
                                 
+                                BehaviorItem(behavior: behavior, description: description)
+                                
+                            }
                         }
                     }
                 }
+                .navigationBarTitle("Investor Behaviors")
+                .navigationBarTitleDisplayMode(.large)
+                .scrollContentBackground(.visible)
+                
+                Spacer()
+                
+                NavigationLink(destination:LiveUpdatesView()) {
+                    Text("Analyze")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.green)
+                    .cornerRadius(10)
+                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
+                    .padding()
+                }
             }
-            .navigationBarTitle("Investor Behaviors")
-            .navigationBarTitleDisplayMode(.large)
-            .scrollContentBackground(.visible)
+            .background(Color.clear)
         }
     }
 }
@@ -95,8 +112,7 @@ struct StrategyView: View {
 
             
             ScrollView {
-                parseBoldText(behaveViewModel.reply)
-//                    .font(.system(size: 18, weight: .medium, design: .rounded))
+                ParsedText(behaveViewModel.reply)
                     .padding()
             }
             
@@ -111,8 +127,10 @@ struct StrategyView: View {
             behaveViewModel.reply = ""
         }
     }
-    
-    func parseBoldText(_ text: String) -> Text {
+}
+
+extension View {
+    func ParsedText(_ text: String) -> Text {
         // Split the text by `**`
         let parts = text.components(separatedBy: "**")
         var result: Text = Text("")
@@ -130,7 +148,6 @@ struct StrategyView: View {
         
         return result
     }
-    
 }
 
 
